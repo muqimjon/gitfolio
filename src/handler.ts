@@ -1,19 +1,20 @@
-import { fetchProfile, CardError } from "./fetcher.js";
-import { normalizeStats } from "./stats.js";
-import { topLanguages } from "./languages.js";
-import { computeStreak } from "./streak.js";
-import { resolveColors } from "./theme.js";
-import { resolveCacheSeconds, cacheHeaders, errorCacheHeaders, CACHE_TTL } from "./cache.js";
-import { avatarDataUri } from "./avatar.js";
-import { resolveIcons } from "./icons.js";
-import { composeCard } from "./card/index.js";
-import { errorCard } from "./card/error.js";
+import { fetchProfile, CardError } from "./fetcher";
+import { normalizeStats } from "./stats";
+import { topLanguages } from "./languages";
+import { computeStreak } from "./streak";
+import { resolveColors } from "./theme";
+import { resolveCacheSeconds, cacheHeaders, errorCacheHeaders, CACHE_TTL } from "./cache";
+import { avatarDataUri } from "./avatar";
+import { resolveIcons } from "./icons";
+import { composeCard } from "./card/index";
+import { errorCard } from "./card/error";
+import type { Align, CardResponse, Env, Query, Social, SocialShow } from "./types";
 
 const SVG_TYPE = "image/svg+xml; charset=utf-8";
 const DEFAULT_SECTIONS = ["header", "stats", "langs", "streak", "activity", "stack", "social"];
-const align = (v) => (["left", "center", "right"].includes(v) ? v : "left");
+const align = (v: string | undefined): Align => (v === "left" || v === "center" || v === "right" ? v : "left");
 
-function parseSocials(str) {
+function parseSocials(str: string | undefined): Social[] {
   return String(str || "")
     .split(",")
     .map((s) => s.trim())
@@ -27,7 +28,7 @@ function parseSocials(str) {
     .filter((s) => s.platform);
 }
 
-export async function handleCard(q = {}, env = {}) {
+export async function handleCard(q: Query = {}, env: Env = {}): Promise<CardResponse> {
   const colors = resolveColors(q, q.theme);
 
   try {
@@ -57,10 +58,11 @@ export async function handleCard(q = {}, env = {}) {
     const socials = sections.includes("social") && q.social ? parseSocials(q.social) : [];
     if (!socials.length) sections = sections.filter((s) => s !== "social");
 
-    let avatar = null;
+    let avatar: string | null = null;
     if (sections.includes("header")) avatar = await avatarDataUri(stats.avatarUrl);
 
-    const socialShow = ["handle", "name", "icon"].includes(q.social_show) ? q.social_show : "handle";
+    const ss = q.social_show;
+    const socialShow: SocialShow = ss === "handle" || ss === "name" || ss === "icon" ? ss : "handle";
 
     const svg = composeCard(
       { stats, languages, streak, calendarWeeks, icons, avatarDataUri: avatar, socials },
@@ -80,6 +82,6 @@ export async function handleCard(q = {}, env = {}) {
     const seconds = resolveCacheSeconds({ requested: q.cache_seconds, ...CACHE_TTL.CARD }, env);
     return { status: 200, headers: { "Content-Type": SVG_TYPE, ...cacheHeaders(seconds) }, body: svg };
   } catch (err) {
-    return { status: 200, headers: { "Content-Type": SVG_TYPE, ...errorCacheHeaders() }, body: errorCard(err, colors) };
+    return { status: 200, headers: { "Content-Type": SVG_TYPE, ...errorCacheHeaders() }, body: errorCard(err as CardError, colors) };
   }
 }
