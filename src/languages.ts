@@ -1,5 +1,7 @@
-export function topLanguages(user, count = 5) {
-  const map = {};
+import type { GHUser, Language } from "./types";
+
+export function topLanguages(user: GHUser, count = 5): Language[] {
+  const map: Record<string, { name: string; color: string; size: number }> = {};
   for (const repo of user.repositories.nodes || []) {
     for (const edge of repo.languages?.edges || []) {
       const name = edge.node.name;

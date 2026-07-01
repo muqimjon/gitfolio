@@ -1,6 +1,8 @@
-export function computeStreak(user) {
+import type { GHUser, Streak, CalendarDay } from "./types";
+
+export function computeStreak(user: GHUser): Streak {
   const weeks = user.contributionsCollection.contributionCalendar.weeks || [];
-  const days = [];
+  const days: CalendarDay[] = [];
   for (const w of weeks) for (const d of w.contributionDays) days.push(d);
   days.sort((a, b) => (a.date < b.date ? -1 : 1));
 
@@ -8,8 +10,12 @@ export function computeStreak(user) {
   const tomorrow = new Date(Date.now() + 86400000).toISOString().slice(0, 10);
 
   let total = 0;
-  let current = 0, curStart = null, curEnd = null;
-  let longest = 0, longStart = null, longEnd = null;
+  let current = 0;
+  let curStart: string | null = null;
+  let curEnd: string | null = null;
+  let longest = 0;
+  let longStart: string | null = null;
+  let longEnd: string | null = null;
 
   for (const d of days) {
     if (d.date > today && !(d.date === tomorrow && d.contributionCount > 0)) continue;

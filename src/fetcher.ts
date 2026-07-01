@@ -1,5 +1,8 @@
+import type { Env, GHUser } from "./types";
+
 export class CardError extends Error {
-  constructor(message, code = "API") {
+  code: string;
+  constructor(message: string, code = "API") {
     super(message);
     this.code = code;
   }
@@ -36,18 +39,27 @@ query userInfo($login: String!) {
   }
 }`;
 
-function tokens(env) {
-  const e = env || (typeof process !== "undefined" ? process.env : {}) || {};
-  const list = [];
+function tokens(env?: Env): string[] {
+  const e: Record<string, string | undefined> = env || (typeof process !== "undefined" ? process.env : {}) || {};
+  const list: string[] = [];
   if (e.GH_TOKEN) list.push(e.GH_TOKEN);
   Object.keys(e)
     .filter((k) => /^PAT_\d+$/.test(k))
     .sort((a, b) => Number(a.slice(4)) - Number(b.slice(4)))
-    .forEach((k) => e[k] && list.push(e[k]));
+    .forEach((k) => {
+      const v = e[k];
+      if (v) list.push(v);
+    });
   return [...new Set(list)];
 }
 
-async function graphql(variables, token) {
+interface GraphQLResponse {
+  data?: { user?: GHUser | null };
+  errors?: Array<{ type?: string; message?: string }>;
+  message?: string;
+}
+
+async function graphql(variables: { login: string }, token: string): Promise<GraphQLResponse> {
   const res = await fetch("https://api.github.com/graphql", {
     method: "POST",
     headers: {
@@ -57,10 +69,10 @@ async function graphql(variables, token) {
     },
     body: JSON.stringify({ query: QUERY, variables }),
   });
-  return res.json();
+  return res.json() as Promise<GraphQLResponse>;
 }
 
-async function fetchAllCommits(login, token) {
+async function fetchAllCommits(login: string, token: string): Promise<number | null> {
   const res = await fetch(
     `https://api.github.com/search/commits?q=author:${encodeURIComponent(login)}`,
     {
@@ -71,11 +83,14 @@ async function fetchAllCommits(login, token) {
       },
     },
   );
-  const json = await res.json();
+  const json = (await res.json()) as { total_count?: number };
   return typeof json.total_count === "number" ? json.total_count : null;
 }
 
-export async function fetchProfile(login, { allCommits = false, env } = {}) {
+export async function fetchProfile(
+  login: string,
+  { allCommits = false, env }: { allCommits?: boolean; env?: Env } = {},
+): Promise<GHUser> {
   const toks = tokens(env);
   if (!toks.length) throw new CardError("No GitHub token configured (set GH_TOKEN)", "NO_TOKEN");
 

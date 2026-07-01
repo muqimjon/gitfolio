@@ -1,8 +1,7 @@
-export function normalizeStats(user) {
-  const stars = (user.repositories.nodes || []).reduce(
-    (sum, r) => sum + (r.stargazerCount || 0),
-    0,
-  );
+import type { GHUser, Stats } from "./types";
+
+export function normalizeStats(user: GHUser): Stats {
+  const stars = (user.repositories.nodes || []).reduce((sum, r) => sum + (r.stargazerCount || 0), 0);
   const yearCommits = user.contributionsCollection.totalCommitContributions;
   const commits = user._allCommits != null ? user._allCommits : yearCommits;
 
