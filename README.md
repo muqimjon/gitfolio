@@ -71,7 +71,7 @@ When `animation` is on (default), sections fade in on load, the activity line dr
 
 ## Deploy your own
 
-gitfolio is a static folder (`public/`) plus one Function that shares a single platform‑neutral core (`src/handler.js`). It runs on **Cloudflare Pages** (via `functions/api/card.js`) or **Vercel** (via `api/card.js`) — no build step, one env var.
+gitfolio is written in **TypeScript**: a static folder (`public/`) plus one Function that shares a single platform‑neutral core (`src/handler.ts`). It runs on **Cloudflare Pages** (via `functions/api/card.ts`) or **Vercel** (via `api/card.ts`). A tiny build step bundles the browser builder (`src/client/builder.ts` → `public/builder.js`); the Function is bundled by the platform. One env var.
 
 ### Cloudflare Pages (recommended)
 
@@ -80,7 +80,7 @@ The static builder is served from `public/`; the `/api/card` endpoint is a Pages
 1. Fork this repo. In the Cloudflare dashboard: **Workers & Pages → Create → Pages → Connect to Git**, pick your fork.
 2. Build settings:
    - **Framework preset:** None
-   - **Build command:** *(leave empty)*
+   - **Build command:** `npm install && npm run build`
    - **Build output directory:** `public`
    - Functions in `/functions` are detected automatically. No `nodejs_compat` flag needed — the code uses only Web APIs.
 3. Create a **classic** [Personal Access Token](https://github.com/settings/tokens) with **no scopes checked** (public data only).
@@ -91,7 +91,7 @@ The static builder is served from `public/`; the `/api/card` endpoint is a Pages
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fmuqimjon%2Fgitfolio&env=GH_TOKEN&envDescription=A%20no-scope%20GitHub%20token%20used%20to%20read%20public%20stats&envLink=https%3A%2F%2Fgithub.com%2Fsettings%2Ftokens&project-name=gitfolio&repository-name=gitfolio)
 
-Import the repo, set `GH_TOKEN`, deploy. `public/` is served at the root and `api/card.js` becomes the function automatically.
+Import the repo, set `GH_TOKEN`, deploy. Vercel runs `npm run build`, serves `public/` at the root, and turns `api/card.ts` into the function automatically.
 
 ### Environment variables
 
@@ -107,8 +107,9 @@ Import the repo, set `GH_TOKEN`, deploy. `public/` is served at the root and `ap
 ```bash
 npm install
 echo "GH_TOKEN=your_token" > .env
-node scripts/serve.js                                     # http://localhost:8787  (builder + /api/card)
-node scripts/preview.js muqimjon --theme=gold --out=out.svg   # render to a file
+npm run dev                                            # builds the bundle, serves http://localhost:8787
+npm run preview -- muqimjon --theme=gold --out=out.svg   # render to a file
+npm run typecheck                                      # tsc --noEmit
 ```
 
 ## Credits
