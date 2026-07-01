@@ -1,0 +1,9 @@
+node_modules/
+.env
+.env.local
+.vercel
+out.svg
+out-*.svg
+gitfolio-demo.svg
+.wrangler/
+*.log
