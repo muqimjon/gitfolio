@@ -1,13 +1,22 @@
 import * as si from "simple-icons";
-import { EXTRA_ICONS } from "./icon-extra.js";
+import { EXTRA_ICONS } from "./icon-extra";
+import type { Icon } from "./types";
 
-const bySlug = new Map();
-for (const key in si) {
-  const ic = si[key];
+interface SimpleIcon {
+  slug?: string;
+  path: string;
+  hex: string;
+  title: string;
+}
+
+const all = si as unknown as Record<string, SimpleIcon | undefined>;
+const bySlug = new Map<string, SimpleIcon>();
+for (const key in all) {
+  const ic = all[key];
   if (ic && ic.slug) bySlug.set(ic.slug, ic);
 }
 
-const INLINE_ICONS = {
+const INLINE_ICONS: Record<string, { label: string; hex: string; vb: number; fr?: string; path: string }> = {
   globe: {
     label: "Website",
     hex: "1F2328",
@@ -17,7 +26,7 @@ const INLINE_ICONS = {
   },
 };
 
-const EXTRA_META = {
+const EXTRA_META: Record<string, { label: string; hex: string }> = {
   csharp: { label: "C#", hex: "512BD4" },
   java: { label: "Java", hex: "ED8B00" },
   azure: { label: "Azure", hex: "0089D6" },
@@ -33,7 +42,7 @@ const EXTRA_META = {
   playwright: { label: "Playwright", hex: "2EAD33" },
 };
 
-const ALIAS = {
+const ALIAS: Record<string, string> = {
   node: "nodedotjs", nodejs: "nodedotjs",
   vue: "vuedotjs", vuejs: "vuedotjs",
   next: "nextdotjs", nextjs: "nextdotjs",
@@ -58,7 +67,7 @@ const ALIAS = {
   gmail: "gmail", email: "gmail", mail: "gmail",
 };
 
-const TEXT_FALLBACK = {
+const TEXT_FALLBACK: Record<string, { label: string; hex: string }> = {
   wpf: { label: "WPF", hex: "512BD4" },
   maui: { label: ".NET MAUI", hex: "512BD4" },
   winforms: { label: "WinForms", hex: "512BD4" },
@@ -67,27 +76,28 @@ const TEXT_FALLBACK = {
   blazor: { label: "Blazor", hex: "512BD4" },
 };
 
-export function resolveIcons(list, limit = 20) {
-  const out = [];
+export function resolveIcons(list: string[], limit = 20): Icon[] {
+  const out: Icon[] = [];
   for (const raw of list.slice(0, limit)) {
     const key = raw.toLowerCase();
     const slug = ALIAS[key] || key;
-    if (INLINE_ICONS[slug]) {
-      const g = INLINE_ICONS[slug];
-      out.push({ path: g.path, hex: g.hex, label: g.label, vb: g.vb, fr: g.fr });
+
+    const inline = INLINE_ICONS[slug];
+    if (inline) {
+      out.push({ path: inline.path, hex: inline.hex, label: inline.label, vb: inline.vb, fr: inline.fr });
       continue;
     }
+
     const ic = bySlug.get(slug);
     if (ic) {
       out.push({ path: ic.path, hex: ic.hex, label: ic.title, vb: 24 });
     } else if (EXTRA_ICONS[slug]) {
       const m = EXTRA_META[slug] || { label: slug, hex: "9CA3AF" };
       out.push({ path: EXTRA_ICONS[slug].path, hex: m.hex, label: m.label, vb: EXTRA_ICONS[slug].vbH });
-    } else if (TEXT_FALLBACK[slug] || TEXT_FALLBACK[key]) {
-      const f = TEXT_FALLBACK[slug] || TEXT_FALLBACK[key];
-      out.push({ label: f.label, hex: f.hex });
     } else {
-      out.push({ label: raw.toUpperCase(), hex: "9CA3AF" });
+      const f = TEXT_FALLBACK[slug] || TEXT_FALLBACK[key];
+      if (f) out.push({ label: f.label, hex: f.hex });
+      else out.push({ label: raw.toUpperCase(), hex: "9CA3AF" });
     }
   }
   return out;

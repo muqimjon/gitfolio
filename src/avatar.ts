@@ -1,4 +1,4 @@
-export async function avatarDataUri(url) {
+export async function avatarDataUri(url: string | null): Promise<string | null> {
   if (!url) return null;
   try {
     const res = await fetch(url);

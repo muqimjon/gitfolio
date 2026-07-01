@@ -1,4 +1,6 @@
-const MAP = {
+type UrlFn = (h: string) => string;
+
+const MAP: Record<string, UrlFn> = {
   github: (h) => `https://github.com/${h}`,
   gitlab: (h) => `https://gitlab.com/${h}`,
   bitbucket: (h) => `https://bitbucket.org/${h}`,
@@ -24,7 +26,7 @@ const MAP = {
   website: (h) => h,
 };
 
-export function socialUrl(platform, handle) {
+export function socialUrl(platform: string, handle: string): string | null {
   if (!handle) return null;
   if (/^(https?:\/\/|mailto:)/i.test(handle)) return handle;
   const fn = MAP[String(platform || "").toLowerCase()];

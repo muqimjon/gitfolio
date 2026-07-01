@@ -1,6 +1,18 @@
+import type { Colors, Query } from "./types";
+
 const DEFAULT_THEME = "dark";
 
-export const themes = {
+interface ThemePreset {
+  primary: string;
+  secondary: string;
+  text: string;
+  muted: string;
+  border: string;
+  bg: string;
+  bg2: string;
+}
+
+export const themes: Record<string, ThemePreset> = {
   gold: { primary: "A69139", secondary: "C9B458", text: "C9D1D9", muted: "8B949E", border: "2A2E3B", bg: "1F222E", bg2: "" },
   dark: { primary: "58A6FF", secondary: "56D364", text: "C9D1D9", muted: "8B949E", border: "30363D", bg: "0D1117", bg2: "" },
   light: { primary: "0969DA", secondary: "1A7F37", text: "1F2328", muted: "656D76", border: "D0D7DE", bg: "FFFFFF", bg2: "" },
@@ -11,20 +23,20 @@ export const themes = {
   forest: { primary: "4ADE80", secondary: "A3E635", text: "DCFCE7", muted: "86EFAC", border: "1F2E22", bg: "0F1F14", bg2: "" },
 };
 
-const isHex = (s) => /^([0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/.test(s || "");
+const isHex = (s?: string): boolean => /^([0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/.test(s || "");
 
-const isGradient = (s) => {
+const isGradient = (s?: string): boolean => {
   const p = String(s || "").split(",");
-  return p.length >= 3 && !isNaN(parseFloat(p[0])) && p.slice(1).every(isHex);
+  return p.length >= 3 && !isNaN(parseFloat(p[0])) && p.slice(1).every((x) => isHex(x));
 };
 
-const rawHex = (v, fb) => (isHex(v) ? v : fb);
-const pickHex = (v, fb) => "#" + (isHex(v) ? v : fb);
+const rawHex = (v: string | undefined, fb: string): string => (isHex(v) ? (v as string) : fb);
+const pickHex = (v: string | undefined, fb: string): string => "#" + (isHex(v) ? (v as string) : fb);
 
-export function resolveColors(q = {}, themeName) {
-  const base = themes[themeName] || themes[DEFAULT_THEME];
+export function resolveColors(q: Query = {}, themeName?: string): Colors {
+  const base = themes[themeName || ""] || themes[DEFAULT_THEME];
 
-  let bgStops;
+  let bgStops: string[];
   let bgAngle = 135;
   if (q.bg && isGradient(q.bg)) {
     const parts = q.bg.split(",");
