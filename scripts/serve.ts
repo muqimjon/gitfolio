@@ -1,7 +1,7 @@
 import http from "node:http";
 import { readFileSync, existsSync, statSync } from "node:fs";
 import { extname, join, normalize } from "node:path";
-import { handleCard } from "../src/handler.js";
+import { handleCard } from "../src/handler";
 
 if (existsSync(".env")) {
   for (const line of readFileSync(".env", "utf8").split("\n")) {
@@ -10,7 +10,7 @@ if (existsSync(".env")) {
   }
 }
 
-const MIME = {
+const MIME: Record<string, string> = {
   ".html": "text/html", ".js": "text/javascript", ".css": "text/css",
   ".svg": "image/svg+xml", ".json": "application/json", ".png": "image/png",
   ".ico": "image/x-icon",
@@ -20,7 +20,7 @@ const PUBLIC = join(ROOT, "public");
 const PORT = process.env.PORT || 8787;
 
 const server = http.createServer(async (req, res) => {
-  const url = new URL(req.url, "http://localhost");
+  const url = new URL(req.url ?? "/", "http://localhost");
   if (url.pathname === "/api/card") {
     const q = Object.fromEntries(url.searchParams.entries());
     const { status, headers, body } = await handleCard(q, process.env);
