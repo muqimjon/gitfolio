@@ -6,8 +6,7 @@
   "description": "Universal, self-hostable GitHub stats card generator — one compact, animated, fully customizable SVG card.",
   "scripts": {
     "dev": "node scripts/serve.js",
-    "preview": "node scripts/preview.js",
-    "deploy": "wrangler deploy"
+    "preview": "node scripts/preview.js"
   },
   "license": "MIT",
   "engines": {

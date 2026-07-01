@@ -71,23 +71,21 @@ When `animation` is on (default), sections fade in on load, the activity line dr
 
 ## Deploy your own
 
-gitfolio is a static folder (`public/`) plus one request handler that shares a single platform‑neutral core (`src/handler.js`). It runs on **Cloudflare Workers** (via `worker.js` + `wrangler.toml`) or **Vercel** (via `api/card.js`) — no build step, one env var.
+gitfolio is a static folder (`public/`) plus one Function that shares a single platform‑neutral core (`src/handler.js`). It runs on **Cloudflare Pages** (via `functions/api/card.js`) or **Vercel** (via `api/card.js`) — no build step, one env var.
 
-### Cloudflare Workers (recommended)
+### Cloudflare Pages (recommended)
 
-Deploys as a Worker serving static assets from `public/`; config lives in `wrangler.toml`.
+The static builder is served from `public/`; the `/api/card` endpoint is a Pages Function in `functions/`.
 
-1. Fork this repo. In the Cloudflare dashboard: **Workers & Pages → Create → Workers → Import a repository**, pick your fork.
-2. Build settings (the defaults are correct):
+1. Fork this repo. In the Cloudflare dashboard: **Workers & Pages → Create → Pages → Connect to Git**, pick your fork.
+2. Build settings:
+   - **Framework preset:** None
    - **Build command:** *(leave empty)*
-   - **Deploy command:** `npx wrangler deploy`
-   - **Path:** `/`
-   - **API token:** leave on *Create new token* — that's Cloudflare's own deploy token, unrelated to GitHub.
+   - **Build output directory:** `public`
+   - Functions in `/functions` are detected automatically. No `nodejs_compat` flag needed — the code uses only Web APIs.
 3. Create a **classic** [Personal Access Token](https://github.com/settings/tokens) with **no scopes checked** (public data only).
-4. Add a variable **`GH_TOKEN`** = your token. For encryption, set it as a **Secret** in the Worker's *Settings → Variables and Secrets* after the first deploy.
-5. Builder: `https://gitfolio.YOUR-SUBDOMAIN.workers.dev` · Card: `…/api/card?username=ANYONE`.
-
-No `nodejs_compat` flag needed — the code uses only Web APIs. Locally: `npx wrangler dev`.
+4. **Settings → Environment variables → Production** → add `GH_TOKEN` = your token → redeploy.
+5. Builder: `https://YOUR-PROJECT.pages.dev` · Card: `…/api/card?username=ANYONE`.
 
 ### Vercel (alternative)
 
