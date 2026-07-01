@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>gitfolio — GitHub stats card builder</title>
+  <meta name="description" content="Build a compact, animated, fully customizable GitHub stats card. Self-hostable, one image, any username.">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="top">
+    <div class="brand">git<span>folio</span></div>
+    <nav>
+      <a class="star-btn" href="https://github.com/muqimjon/gitfolio" target="_blank" rel="noopener">★ Star on GitHub</a>
+    </nav>
+  </header>
+
+  <main class="layout">
+    <section class="panel controls">
+      <h1>Build your card</h1>
+      <p class="lead">One compact, animated GitHub card. Tweak it, copy the snippet, done.</p>
+
+      <label class="field">
+        <span>GitHub username</span>
+        <input id="username" type="text" placeholder="octocat" autocomplete="off" spellcheck="false">
+      </label>
+
+      <label class="field">
+        <span>Theme preset</span>
+        <select id="theme"></select>
+      </label>
+
+      <div class="grid2">
+        <label class="field color"><span>Primary</span><div><input id="primary" type="color"><input id="primary_hex" class="hex" maxlength="7"></div></label>
+        <label class="field color"><span>Secondary</span><div><input id="secondary" type="color"><input id="secondary_hex" class="hex" maxlength="7"></div></label>
+        <label class="field color"><span>Background</span><div><input id="bg" type="color"><input id="bg_hex" class="hex" maxlength="7"></div></label>
+        <label class="field color"><span>Background 2 <small>(gradient)</small></span><div><input id="bg2" type="color"><input id="bg2_hex" class="hex" maxlength="7"></div></label>
+      </div>
+      <label class="check inline"><input id="use_bg2" type="checkbox"> Use gradient background</label>
+
+      <fieldset class="field">
+        <span class="legend">Sections <small>— drag to reorder</small></span>
+        <div id="sections" class="chips drag"></div>
+      </fieldset>
+
+      <fieldset class="field collapsible" id="fs_stack">
+        <button type="button" class="legend toggle" data-target="stack_body"><span class="caret">▸</span> Tech stack <small>— type any <a href="https://simpleicons.org" target="_blank" rel="noopener">Simple Icons</a> slug + Enter</small></button>
+        <div class="collapse-body" id="stack_body" hidden>
+          <input id="stack_input" type="text" placeholder="e.g. dotnet, react, docker, kubernetes…" autocomplete="off" spellcheck="false">
+          <div id="stack_selected" class="chips selected drag"></div>
+          <label class="inline-sel"><span>Align</span>
+            <select id="stack_align">
+              <option value="left">left</option>
+              <option value="center">center</option>
+              <option value="right">right</option>
+            </select>
+          </label>
+          <label class="check soft"><input id="stack_mono" type="checkbox"> Match icons to theme color</label>
+          <div id="stack_suggest" class="chips suggest"></div>
+        </div>
+      </fieldset>
+
+      <fieldset class="field collapsible" id="fs_social">
+        <button type="button" class="legend toggle" data-target="social_body"><span class="caret">▸</span> Social links <small>— platform:handle</small></button>
+        <div class="collapse-body" id="social_body" hidden>
+          <input id="social_input" type="text" placeholder="e.g. linkedin:you, telegram:you — press Enter" autocomplete="off" spellcheck="false">
+          <label class="inline-sel"><span>Show as</span>
+            <select id="social_show">
+              <option value="handle">logo + handle</option>
+              <option value="name">logo + platform name</option>
+              <option value="icon">logo only</option>
+            </select>
+          </label>
+          <label class="inline-sel"><span>Align</span>
+            <select id="social_align">
+              <option value="left">left</option>
+              <option value="center">center</option>
+              <option value="right">right</option>
+            </select>
+          </label>
+          <div id="social_selected" class="chips selected drag"></div>
+          <label class="check soft"><input id="social_mono" type="checkbox"> Match icons to theme color</label>
+          <div id="social_suggest" class="chips suggest"></div>
+          <p class="note">Links open when the card is viewed as an SVG. GitHub embeds it as a static image, so per-icon links aren't clickable there — wrap the whole image in a link instead.</p>
+        </div>
+      </fieldset>
+
+      <div class="grid2 opts">
+        <label class="check"><input id="animation" type="checkbox" checked> Animations</label>
+        <label class="check"><input id="all_commits" type="checkbox"> All-time commits</label>
+        <label class="check"><input id="hide_border" type="checkbox"> Hide border</label>
+      </div>
+    </section>
+
+    <section class="panel preview">
+      <div class="preview-head">
+        <span>Live preview</span>
+        <button id="refresh" class="ghost" title="Refresh">↻ Refresh</button>
+      </div>
+      <div class="preview-stage">
+        <img id="card" alt="card preview">
+        <div id="hint" class="hint">Enter a username to see your card.</div>
+      </div>
+
+      <div class="snippets">
+        <div class="snip">
+          <div class="snip-head"><span>Markdown</span><button data-copy="md" class="copy">Copy</button></div>
+          <code id="md"></code>
+        </div>
+        <div class="snip">
+          <div class="snip-head"><span>HTML</span><button data-copy="html" class="copy">Copy</button></div>
+          <code id="html"></code>
+        </div>
+        <div class="snip">
+          <div class="snip-head"><span>Direct URL</span><button data-copy="url" class="copy">Copy</button></div>
+          <code id="url"></code>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    Free &amp; open source. If gitfolio is useful to you, <a href="https://github.com/muqimjon/gitfolio" target="_blank" rel="noopener">give it a ⭐ on GitHub</a>.
+  </footer>
+
+  <script src="/builder.js"></script>
+</body>
+</html>
