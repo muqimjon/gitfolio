@@ -1,4 +1,5 @@
-import { esc, measureText } from "../measure.js";
+import { esc, measureText } from "../measure";
+import type { CardContext, Section } from "../types";
 
 const LABEL_H = 20;
 const BAR_Y = LABEL_H;
@@ -6,7 +7,7 @@ const BAR_H = 9;
 const LEGEND_Y = BAR_Y + BAR_H + 18;
 const ROW_H = 18;
 
-export default function langsBar({ c, W, data }) {
+export default function langsBar({ c, W, data }: CardContext): Section {
   const langs = data.languages;
   if (!langs.length) return { h: 0, draw: () => "" };
 

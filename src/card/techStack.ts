@@ -1,15 +1,21 @@
-import { esc, measureText, isDark } from "../measure.js";
+import { esc, measureText, isDark } from "../measure";
+import type { CardContext, Icon, Section } from "../types";
 
 const LABEL_H = 18;
 const SIZE = 24;
 const GAP = 10;
 const ROW_H = 32;
 
-export default function techStack({ c, W, mono, data, stackAlign = "left" }) {
+interface Cell {
+  ic: Icon;
+  wpx: number;
+}
+
+export default function techStack({ c, W, mono, data, stackAlign = "left" }: CardContext): Section {
   const icons = data.icons || [];
   if (!icons.length) return { h: 0, draw: () => "" };
 
-  const rows = [[]];
+  const rows: Cell[][] = [[]];
   let x = 0;
   for (const ic of icons) {
     const wpx = ic.path ? SIZE : Math.max(SIZE, 14 + measureText(ic.label, 11, 700));
@@ -21,7 +27,7 @@ export default function techStack({ c, W, mono, data, stackAlign = "left" }) {
     x += wpx + GAP;
   }
 
-  const nodes = [];
+  const nodes: string[] = [];
   rows.forEach((row, r) => {
     const rowW = row.reduce((s, it) => s + it.wpx + GAP, 0) - GAP;
     let ox = stackAlign === "center" ? (W - rowW) / 2 : stackAlign === "right" ? W - rowW : 0;

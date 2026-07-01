@@ -1,7 +1,8 @@
-import { esc } from "../measure.js";
-import { countUp } from "./odometer.js";
+import { esc } from "../measure";
+import { countUp } from "./odometer";
+import type { CardContext, Section } from "../types";
 
-function fmt(d) {
+function fmt(d: string | null): string {
   if (!d) return "";
   return new Date(d + "T00:00:00Z").toLocaleDateString("en-US", {
     month: "short",
@@ -10,15 +11,15 @@ function fmt(d) {
   });
 }
 
-export default function streakBlock({ c, W, data }) {
+export default function streakBlock({ c, W, data }: CardContext): Section {
   const st = data.streak;
   const h = 78;
   const colW = W / 3;
 
   const cols = [
-    { v: st.total, l: "Contributions", d: "past year" },
+    { v: st.total, l: "Contributions", d: "past year", ring: false },
     { v: st.current, l: "Current Streak", d: st.current ? `${fmt(st.curStart)} – ${fmt(st.curEnd)}` : "—", ring: true },
-    { v: st.longest, l: "Longest Streak", d: st.longest ? `${fmt(st.longStart)} – ${fmt(st.longEnd)}` : "—" },
+    { v: st.longest, l: "Longest Streak", d: st.longest ? `${fmt(st.longStart)} – ${fmt(st.longEnd)}` : "—", ring: false },
   ];
 
   const draw = cols

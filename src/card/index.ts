@@ -1,19 +1,20 @@
-import { esc } from "../measure.js";
-import { flushOdometerCss } from "./odometer.js";
-import header from "./header.js";
-import statsBlock from "./statsBlock.js";
-import langsBar from "./langsBar.js";
-import streakBlock from "./streakBlock.js";
-import activity from "./activity.js";
-import techStack from "./techStack.js";
-import social from "./social.js";
+import { esc } from "../measure";
+import { flushOdometerCss } from "./odometer";
+import header from "./header";
+import statsBlock from "./statsBlock";
+import langsBar from "./langsBar";
+import streakBlock from "./streakBlock";
+import activity from "./activity";
+import techStack from "./techStack";
+import social from "./social";
+import type { CardContext, CardData, CardOptions, Section } from "../types";
 
 const WIDTH = 480;
 const PAD = 24;
 const GAP = 22;
 const RADIUS = 14;
 
-const BUILDERS = {
+const BUILDERS: Record<string, (ctx: CardContext) => Section> = {
   header,
   stats: statsBlock,
   langs: langsBar,
@@ -23,7 +24,7 @@ const BUILDERS = {
   social,
 };
 
-function style(anim, odoCss = "") {
+function style(anim: boolean, odoCss = ""): string {
   const font =
     "text{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Ubuntu,Helvetica,Arial,sans-serif}";
   const on = `
@@ -41,14 +42,14 @@ ${odoCss}`;
   return `<style>${anim ? on : font}</style>`;
 }
 
-export function composeCard(data, opts) {
+export function composeCard(data: CardData, opts: CardOptions): string {
   const { colors: c, sections, animation, hideBorder, mono, socialShow, socialMono, stackAlign, socialAlign } = opts;
   const W = WIDTH - PAD * 2;
-  const ctx = { c, W, WIDTH, PAD, anim: animation, mono, socialShow, socialMono, stackAlign, socialAlign, data };
+  const ctx: CardContext = { c, W, WIDTH, PAD, anim: animation, mono, socialShow, socialMono, stackAlign, socialAlign, data };
 
-  const seen = new Set();
+  const seen = new Set<string>();
   const active = sections.filter((s) => BUILDERS[s] && !seen.has(s) && seen.add(s));
-  const built = [];
+  const built: Section[] = [];
   for (const name of active) {
     const sec = BUILDERS[name](ctx);
     if (sec && sec.h > 0) built.push(sec);

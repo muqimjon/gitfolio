@@ -1,18 +1,26 @@
-import { esc, measureText, isDark } from "../measure.js";
-import { resolveIcons } from "../icons.js";
-import { socialUrl } from "../social-url.js";
+import { esc, measureText, isDark } from "../measure";
+import { resolveIcons } from "../icons";
+import { socialUrl } from "../social-url";
+import type { CardContext, Icon, Section, Social } from "../types";
 
 const LABEL_H = 18;
 const SIZE = 18;
 const GAP_X = 18;
 const ROW_H = 26;
 
-export default function social({ c, W, data, socialShow = "handle", socialMono = false, socialAlign = "left" }) {
+interface Cell {
+  it: Social;
+  ic: Icon;
+  text: string;
+  w: number;
+}
+
+export default function social({ c, W, data, socialShow = "handle", socialMono = false, socialAlign = "left" }: CardContext): Section {
   const items = data.socials || [];
   if (!items.length) return { h: 0, draw: () => "" };
 
   const icons = resolveIcons(items.map((i) => i.platform));
-  const rows = [[]];
+  const rows: Cell[][] = [[]];
   let x = 0;
   items.forEach((it, idx) => {
     const ic = icons[idx];
@@ -26,7 +34,7 @@ export default function social({ c, W, data, socialShow = "handle", socialMono =
     x += w + GAP_X;
   });
 
-  const nodes = [];
+  const nodes: string[] = [];
   rows.forEach((row, r) => {
     const rowW = row.reduce((s, it) => s + it.w + GAP_X, 0) - GAP_X;
     let ox = socialAlign === "center" ? (W - rowW) / 2 : socialAlign === "right" ? W - rowW : 0;
@@ -34,7 +42,7 @@ export default function social({ c, W, data, socialShow = "handle", socialMono =
     const y = LABEL_H + r * ROW_H;
     for (const { it, ic, text, w } of row) {
       const fill = socialMono ? c.secondary : isDark(ic.hex) ? c.text : "#" + ic.hex;
-      const inner = [];
+      const inner: string[] = [];
       if (ic.path) inner.push(`<g transform="translate(${ox.toFixed(1)},${y}) scale(${(SIZE / (ic.vb || 24)).toFixed(4)})"><path d="${ic.path}" fill="${fill}"${ic.fr ? ` fill-rule="${ic.fr}"` : ""}/></g>`);
       else inner.push(`<circle cx="${(ox + SIZE / 2).toFixed(1)}" cy="${y + SIZE / 2}" r="${SIZE / 2}" fill="none" stroke="${fill}" stroke-width="1.5"/>`);
       if (text) inner.push(`<text x="${(ox + SIZE + 6).toFixed(1)}" y="${y + SIZE / 2}" fill="${c.text}" font-size="11" dominant-baseline="central">${esc(text)}</text>`);

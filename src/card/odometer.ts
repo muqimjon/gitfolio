@@ -1,32 +1,42 @@
-import { esc } from "../measure.js";
+import { esc } from "../measure";
 
 let uid = 0;
-let kf = [];
+let kf: string[] = [];
 
-export function flushOdometerCss() {
+export function flushOdometerCss(): string {
   const s = kf.join("");
   kf = [];
   return s;
 }
 
-function charW(ch, size) {
+function charW(ch: string, size: number): number {
   if (ch >= "0" && ch <= "9") return size * 0.62;
   if (ch === ".") return size * 0.3;
   if (ch === " ") return size * 0.3;
   return size * 0.56;
 }
 
-// Count-up number: each digit scrolls 0 -> its value via a concrete per-digit keyframe.
-// Freeze-safe: the final position is also set as a transform attribute, so a renderer
-// that ignores CSS animation still shows the correct number.
-export function countUp(value, { x = 0, cy = 0, size = 16, weight = 700, color = "#fff", anchor = "start", dur = 0.8 }) {
+interface CountUpOpts {
+  x?: number;
+  cy?: number;
+  size?: number;
+  weight?: number;
+  color?: string;
+  anchor?: "start" | "middle";
+  dur?: number;
+}
+
+export function countUp(
+  value: string | number,
+  { x = 0, cy = 0, size = 16, weight = 700, color = "#fff", anchor = "start", dur = 0.8 }: CountUpOpts = {},
+): string {
   const str = String(value);
   const cellH = size * 1.25;
   const chars = [...str].map((ch) => ({ ch, digit: ch >= "0" && ch <= "9", w: charW(ch, size) }));
   const total = chars.reduce((s, c) => s + c.w, 0);
   let cx = anchor === "middle" ? x - total / 2 : x;
   const top = cy - cellH / 2;
-  const parts = [];
+  const parts: string[] = [];
 
   for (const c of chars) {
     if (c.digit) {

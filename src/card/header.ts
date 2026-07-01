@@ -1,13 +1,14 @@
-import { esc, truncate, kFormatter } from "../measure.js";
+import { esc, truncate, kFormatter } from "../measure";
+import type { CardContext, Section } from "../types";
 
-export default function header({ c, W, data }) {
+export default function header({ c, W, data }: CardContext): Section {
   const s = data.stats;
   const AV = 54;
   const h = 58;
   const cy = h / 2;
   const tx = AV + 16;
 
-  let avatar;
+  let avatar: string;
   if (data.avatarDataUri) {
     avatar = `<clipPath id="av"><circle cx="${AV / 2}" cy="${cy}" r="${AV / 2}"/></clipPath>
 <image href="${data.avatarDataUri}" x="0" y="${cy - AV / 2}" width="${AV}" height="${AV}" clip-path="url(#av)"/>

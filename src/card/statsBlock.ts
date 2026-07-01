@@ -1,12 +1,13 @@
-import { esc, kFormatter, measureText } from "../measure.js";
-import { glyph } from "./glyphs.js";
-import { countUp } from "./odometer.js";
+import { esc, kFormatter, measureText } from "../measure";
+import { glyph } from "./glyphs";
+import { countUp } from "./odometer";
+import type { CardContext, Section } from "../types";
 
-export default function statsBlock({ c, W, data }) {
+export default function statsBlock({ c, W, data }: CardContext): Section {
   const s = data.stats;
   const items = [
     { g: "star", v: s.stars, l: "Stars" },
-    { g: "commit", v: s.commits, l: s.allCommits ? "Commits" : "Commits" },
+    { g: "commit", v: s.commits, l: "Commits" },
     { g: "pr", v: s.prs, l: "PRs" },
     { g: "issue", v: s.issues, l: "Issues" },
     { g: "repo", v: s.contributed, l: "Contrib" },

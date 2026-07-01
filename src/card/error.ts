@@ -1,6 +1,7 @@
-import { esc } from "../measure.js";
+import { esc } from "../measure";
+import type { Colors } from "../types";
 
-export function errorCard(err, c) {
+export function errorCard(err: { message?: string; code?: string } | null | undefined, c: Colors): string {
   const W = 480;
   const H = 120;
   const msg = err?.message || "Something went wrong";

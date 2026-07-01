@@ -1,21 +1,24 @@
 import { line, area, curveMonotoneX } from "d3-shape";
+import type { CardContext, Section } from "../types";
 
 const LABEL_H = 18;
 const GRAPH_H = 48;
 
-export default function activity({ c, W, data }) {
+type Pt = [number, number];
+
+export default function activity({ c, W, data }: CardContext): Section {
   const weeks = data.calendarWeeks || [];
   const vals = weeks.map((w) => w.contributionDays.reduce((s, d) => s + d.contributionCount, 0));
   if (vals.length < 2) return { h: 0, draw: () => "" };
 
   const max = Math.max(1, ...vals);
   const n = vals.length;
-  const pts = vals.map((v, i) => [
+  const pts: Pt[] = vals.map((v, i) => [
     (i / (n - 1)) * W,
     GRAPH_H - (v / max) * (GRAPH_H - 6) - 2,
   ]);
-  const ln = line().x((d) => d[0]).y((d) => d[1]).curve(curveMonotoneX)(pts);
-  const ar = area().x((d) => d[0]).y0(GRAPH_H).y1((d) => d[1]).curve(curveMonotoneX)(pts);
+  const ln = line<Pt>().x((d) => d[0]).y((d) => d[1]).curve(curveMonotoneX)(pts) || "";
+  const ar = area<Pt>().x((d) => d[0]).y0(GRAPH_H).y1((d) => d[1]).curve(curveMonotoneX)(pts) || "";
 
   return {
     h: LABEL_H + GRAPH_H,
