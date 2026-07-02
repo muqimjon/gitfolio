@@ -76,6 +76,7 @@ export async function handleCard(q: Query = {}, env: Env = {}): Promise<CardResp
         socialMono: q.social_mono === "true",
         stackAlign: align(q.stack_align),
         socialAlign: align(q.social_align),
+        brand: q.brand !== "false",
       },
     );
 

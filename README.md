@@ -48,6 +48,7 @@ Or build it visually with the **[interactive builder](https://gitcrest.pages.dev
 | `all_commits` | Count all-time commits (slower) instead of last year | `false` |
 | `animation` | Set `false` to disable animations | `true` |
 | `hide_border` | Hide the card border | `false` |
+| `brand` | Show a faint watermark link in the bottom-right corner; set `false` to hide | `true` |
 | `cache_seconds` | Cache TTL (clamped 43200–172800) | `86400` |
 
 ### Tech stack slugs

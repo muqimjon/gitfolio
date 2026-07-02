@@ -113,6 +113,7 @@ export interface CardOptions {
   socialMono: boolean;
   stackAlign: Align;
   socialAlign: Align;
+  brand: boolean;
 }
 
 export interface CardContext {

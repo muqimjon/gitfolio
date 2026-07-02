@@ -79,6 +79,7 @@ async function main(): Promise<void> {
     socialMono: q.social_mono === "true",
     stackAlign: (["left", "center", "right"].includes(q.stack_align) ? q.stack_align : "left") as Align,
     socialAlign: (["left", "center", "right"].includes(q.social_align) ? q.social_align : "left") as Align,
+    brand: q.brand !== "false",
   });
   const out = q.out || "out.svg";
   writeFileSync(out, svg);

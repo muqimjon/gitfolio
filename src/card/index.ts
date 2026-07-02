@@ -13,6 +13,7 @@ const WIDTH = 480;
 const PAD = 24;
 const GAP = 22;
 const RADIUS = 14;
+const BRAND = "gitcrest.pages.dev";
 
 const BUILDERS: Record<string, (ctx: CardContext) => Section> = {
   header,
@@ -43,7 +44,7 @@ ${odoCss}`;
 }
 
 export function composeCard(data: CardData, opts: CardOptions): string {
-  const { colors: c, sections, animation, hideBorder, mono, socialShow, socialMono, stackAlign, socialAlign } = opts;
+  const { colors: c, sections, animation, hideBorder, mono, socialShow, socialMono, stackAlign, socialAlign, brand } = opts;
   const W = WIDTH - PAD * 2;
   const ctx: CardContext = { c, W, WIDTH, PAD, anim: animation, mono, socialShow, socialMono, stackAlign, socialAlign, data };
 
@@ -72,11 +73,15 @@ export function composeCard(data: CardData, opts: CardOptions): string {
     : "";
   const bg = grad ? "url(#bg)" : c.bgStops[0];
   const border = hideBorder ? "none" : c.border;
+  const mark = brand
+    ? `<text x="${WIDTH - 10}" y="${height - 9}" text-anchor="end" font-size="9" fill="${c.muted}" opacity="0.6">${BRAND}</text>`
+    : "";
 
   return `<svg width="${WIDTH}" height="${height}" viewBox="0 0 ${WIDTH} ${height}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${esc(data.stats.name)}'s GitHub stats">
 <defs>${defs}</defs>
 ${style(animation, odoCss)}
 <rect x="0.5" y="0.5" width="${WIDTH - 1}" height="${height - 1}" rx="${RADIUS}" fill="${bg}" stroke="${border}" stroke-width="1"/>
 ${body}
+${mark}
 </svg>`;
 }
