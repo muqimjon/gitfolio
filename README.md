@@ -5,10 +5,9 @@
 **One compact, animated, fully-customizable GitHub stats card.**
 Self-hostable · one image · any username · exact colors.
 
-<!-- After deploy, replace INSTANCE with your Vercel domain to show a live demo here -->
-![gitfolio card](https://INSTANCE.vercel.app/api/card?username=muqimjon&theme=gold)
+![gitfolio card](https://gitcrest.pages.dev/api/card?username=muqimjon&theme=gold)
 
-[Builder](https://INSTANCE.pages.dev) · [Deploy your own](#deploy-your-own)
+[Builder](https://gitcrest.pages.dev) · [Deploy your own](#deploy-your-own)
 
 </div>
 
@@ -23,10 +22,10 @@ Public stat-card services (`github-readme-stats`, `github-profile-trophy`) frequ
 Add one image to your profile `README.md` (swap `INSTANCE` for your deployed domain and set your username):
 
 ```md
-![My GitHub stats](https://INSTANCE.vercel.app/api/card?username=YOUR_NAME&theme=gold)
+![My GitHub stats](https://INSTANCE.pages.dev/api/card?username=YOUR_NAME&theme=gold)
 ```
 
-Or build it visually with the **[interactive builder](https://INSTANCE.vercel.app)** — pick colors, toggle sections, choose your stack, copy the snippet.
+Or build it visually with the **[interactive builder](https://gitcrest.pages.dev)** — pick colors, toggle sections, choose your stack, copy the snippet.
 
 ## Parameters
 
