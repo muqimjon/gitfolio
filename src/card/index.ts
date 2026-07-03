@@ -10,7 +10,7 @@ import social from "./social";
 import type { CardContext, CardData, CardOptions, Section } from "../types";
 
 const WIDTH = 480;
-const PAD = 18;
+const PAD = 24;
 const GAP = 22;
 const RADIUS = 14;
 const BRAND = "gitcrest.pages.dev";
