@@ -10,18 +10,17 @@ export interface UsageRow {
   country: string | null;
 }
 
-export async function recordUsage(db: D1Database, m: CardMeta, country: string | null): Promise<void> {
+export async function recordUsage(db: D1Database, m: CardMeta): Promise<void> {
   const now = new Date().toISOString();
   await db
     .prepare(
-      `INSERT INTO usage (username, name, requests, stars, contributions, streak, country, first_seen, last_seen)
-       VALUES (?1, ?2, 1, ?3, ?4, ?5, ?6, ?7, ?7)
+      `INSERT INTO usage (username, name, requests, stars, contributions, streak, first_seen, last_seen)
+       VALUES (?1, ?2, 1, ?3, ?4, ?5, ?6, ?6)
        ON CONFLICT(username) DO UPDATE SET
          name = excluded.name, requests = usage.requests + 1, stars = excluded.stars,
-         contributions = excluded.contributions, streak = excluded.streak,
-         country = COALESCE(excluded.country, usage.country), last_seen = excluded.last_seen`,
+         contributions = excluded.contributions, streak = excluded.streak, last_seen = excluded.last_seen`,
     )
-    .bind(m.username.toLowerCase(), m.name, m.stars, m.contributions, m.streak, country, now)
+    .bind(m.username.toLowerCase(), m.name, m.stars, m.contributions, m.streak, now)
     .run();
 }
 

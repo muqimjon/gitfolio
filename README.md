@@ -104,7 +104,7 @@ Import the repo, set `GH_TOKEN`, deploy. Vercel runs `npm run build`, serves `pu
 
 ### Leaderboard & telemetry (optional, Cloudflare only)
 
-Each successful card render upserts the username's public stats into a **D1** table, and `/leaderboard.html` ranks everyone using the instance. To enable it on your own deploy:
+Card renders requested by GitHub's camo image proxy — i.e. cards actually embedded on a GitHub profile — upsert the username's public stats into a **D1** table, and `/leaderboard.html` ranks everyone using the instance. Builder previews and direct link visits are not counted. To enable it on your own deploy:
 
 1. `npx wrangler d1 create gitfolio`
 2. `npx wrangler d1 execute gitfolio --remote --file=schema.sql`
