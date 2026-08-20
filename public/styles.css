@@ -74,6 +74,7 @@ fieldset { border: 0; padding: 0; margin: 0 0 16px; }
 .chips.selected .chip::after { content: " ✕"; opacity: .7; }
 .chips.suggest .chip { opacity: .85; }
 .chips.suggest .chip::before { content: "+ "; color: var(--muted); }
+.chip-ic { width: 13px; height: 13px; vertical-align: -2px; margin-right: 5px; background: #fff; border-radius: 3px; padding: 1.5px; }
 .chips.drag .chip { cursor: grab; }
 .chips.drag .chip.dragging { opacity: .45; cursor: grabbing; }
 
@@ -110,6 +111,14 @@ input[type=checkbox] { accent-color: var(--accent); width: 16px; height: 16px; }
 .preview-stage img { max-width: 100%; height: auto; display: block; }
 .preview-stage img[src=""] { display: none; }
 .hint { color: var(--muted); font-size: 13px; }
+.skel {
+  display: none; width: 480px; max-width: 100%; height: 260px; border-radius: 10px;
+  background: linear-gradient(100deg, var(--panel) 40%, var(--panel2) 50%, var(--panel) 60%);
+  background-size: 200% 100%; animation: shimmer 1.1s linear infinite;
+}
+@keyframes shimmer { to { background-position: -200% 0; } }
+.preview-stage.loading .skel { display: block; }
+.preview-stage.loading img, .preview-stage.loading .hint { display: none; }
 
 .snippets { margin-top: 16px; display: flex; flex-direction: column; gap: 12px; }
 .snip { background: var(--panel2); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }

@@ -62,11 +62,21 @@ function attachSectionReorder(el: HTMLElement) {
   };
 }
 
-function buildSections() {
+function iconImg(slug: string): HTMLImageElement {
+  const img = document.createElement("img");
+  img.className = "chip-ic";
+  img.src = `/api/icon?slug=${encodeURIComponent(slug)}`;
+  img.alt = "";
+  img.loading = "lazy";
+  img.onerror = () => img.remove();
+  return img;
+}
+
+function buildSections(on: string[]) {
   const box = $("sections");
-  SECTIONS.forEach((s) => {
+  [...on, ...SECTIONS.filter((s) => !on.includes(s))].forEach((s) => {
     const el = document.createElement("span");
-    el.className = "chip on";
+    el.className = on.includes(s) ? "chip on" : "chip";
     el.textContent = s;
     el.dataset.sec = s;
     el.onclick = () => { if (dragging) return; el.classList.toggle("on"); render(); };
@@ -75,17 +85,56 @@ function buildSections() {
   });
 }
 
-function buildSuggest() {
+type CatalogEntry = [string, string, string];
+let catalog: CatalogEntry[] | null = null;
+let catalogLoading = false;
+async function loadCatalog() {
+  if (catalog || catalogLoading) return;
+  catalogLoading = true;
+  try {
+    catalog = await (await fetch("/icons.json")).json();
+    filterSuggest();
+  } catch {
+    catalogLoading = false;
+  }
+}
+
+function renderSuggestChips(items: [string, string][]) {
   const box = $("stack_suggest");
-  SUGGEST.forEach((s) => {
+  box.innerHTML = "";
+  items.forEach(([slug, title]) => {
     const el = document.createElement("span");
     el.className = "chip";
-    el.textContent = s;
-    el.dataset.slug = s;
-    el.onclick = () => addStack(s);
+    el.textContent = slug;
+    el.title = title;
+    el.prepend(iconImg(slug));
+    el.dataset.slug = slug;
+    el.onclick = () => {
+      addStack(slug);
+      const inp = $("stack_input");
+      if (inp.value) { inp.value = ""; filterSuggest(); }
+    };
     box.appendChild(el);
   });
   syncSuggest();
+}
+function buildSuggest() {
+  renderSuggestChips(SUGGEST.map((s) => [s, s]));
+}
+function filterSuggest() {
+  const q = ($("stack_input").value.split(",").pop() || "").trim().toLowerCase();
+  if (!q) { buildSuggest(); return; }
+  loadCatalog();
+  if (!catalog) return;
+  const starts: [string, string][] = [];
+  const contains: [string, string][] = [];
+  for (const [slug, title, aliases] of catalog) {
+    const t = title.toLowerCase();
+    if (slug.startsWith(q) || t.startsWith(q)) starts.push([slug, title]);
+    else if (slug.includes(q) || t.includes(q) || aliases.includes(q)) contains.push([slug, title]);
+    if (starts.length >= 30) break;
+  }
+  renderSuggestChips(starts.concat(contains).slice(0, 30));
 }
 function syncSuggest() {
   document.querySelectorAll<HTMLElement>("#stack_suggest .chip").forEach((el) => {
@@ -115,6 +164,7 @@ function renderStack() {
     const el = document.createElement("span");
     el.className = "chip";
     el.textContent = s;
+    el.prepend(iconImg(s));
     el.onclick = () => { if (dragging) return; removeStack(s); };
     attachReorder(el, i, stack, renderStack);
     box.appendChild(el);
@@ -127,6 +177,7 @@ function buildSocialSuggest() {
     const el = document.createElement("span");
     el.className = "chip";
     el.textContent = s;
+    el.prepend(iconImg(s));
     el.dataset.slug = s;
     el.onclick = () => { const inp = $("social_input"); inp.value = s + ":"; inp.focus(); };
     box.appendChild(el);
@@ -139,14 +190,18 @@ function syncSocialSuggest() {
     el.style.display = used.has(el.dataset.slug!) ? "none" : "";
   });
 }
-function addSocial(str: string) {
+function pushSocial(str: string): boolean {
   str = str.trim();
-  if (!str) return;
+  if (!str) return false;
   const i = str.indexOf(":");
   const platform = (i === -1 ? str : str.slice(0, i)).trim().toLowerCase();
   const handle = i === -1 ? "" : str.slice(i + 1).trim();
-  if (!platform || socials.some((s) => s.platform === platform)) return;
+  if (!platform || socials.some((s) => s.platform === platform)) return false;
   socials.push({ platform, handle });
+  return true;
+}
+function addSocial(str: string) {
+  if (!pushSocial(str)) return;
   renderSocials();
   syncSocialSuggest();
   render();
@@ -165,6 +220,7 @@ function renderSocials() {
     const el = document.createElement("span");
     el.className = "chip";
     el.textContent = s.handle ? `${s.platform}:${s.handle}` : s.platform;
+    el.prepend(iconImg(s.platform));
     el.onclick = () => { if (dragging) return; removeSocial(s.platform); };
     attachReorder(el, i, socials, renderSocials);
     box.appendChild(el);
@@ -226,14 +282,25 @@ function buildParams(): URLSearchParams {
   return p;
 }
 
+let lastSrc: string | null = null;
+function setCardSrc(src: string) {
+  if (src === lastSrc) return;
+  lastSrc = src;
+  const card = $("card");
+  const stage = card.closest(".preview-stage")!;
+  stage.classList.toggle("loading", !!src);
+  card.onload = card.onerror = () => stage.classList.remove("loading");
+  card.src = src;
+}
+
 function render() {
   const p = buildParams();
   const hasUser = p.has("username");
   $("hint").style.display = hasUser ? "none" : "block";
   const qs = p.toString();
-  const rel = `/api/card?${qs}`;
+  history.replaceState(null, "", qs ? `#${qs}` : location.pathname + location.search);
   const abs = `${location.origin}/api/card?${qs}`;
-  $("card").src = hasUser ? rel : "";
+  setCardSrc(hasUser ? `/api/card?${qs}` : "");
   const user = $("username").value.trim() || "USERNAME";
   $("url").textContent = abs;
   $("md").textContent = `![${user}'s GitHub stats](${abs})`;
@@ -254,6 +321,24 @@ async function copy(text: string, btn: HTMLElement) {
   } catch { btn.textContent = "Ctrl+C"; }
 }
 
+function restore() {
+  const p = new URLSearchParams(location.hash.slice(1));
+  const theme = p.get("theme");
+  if (theme && THEMES[theme]) $("theme").value = theme;
+  applyTheme($("theme").value);
+  if (p.get("username")) $("username").value = p.get("username")!;
+  ["primary", "secondary", "bg", "bg2"].forEach((id) => { const v = p.get(id); if (v) setColor(id, v); });
+  if (p.has("bg2")) $("use_bg2").checked = true;
+  const secs = (p.get("sections") || "").split(",").map((s) => s.trim().toLowerCase()).filter((s) => SECTIONS.includes(s));
+  buildSections(secs.length ? secs : SECTIONS);
+  (p.get("stack") || "").split(",").map((s) => s.trim().toLowerCase()).filter(Boolean)
+    .forEach((s) => { if (!stack.includes(s)) stack.push(s); });
+  (p.get("social") || "").split(",").forEach(pushSocial);
+  if (p.get("animation") === "false") $("animation").checked = false;
+  ["all_commits", "hide_border", "stack_mono", "social_mono"].forEach((id) => { if (p.get(id) === "true") $(id).checked = true; });
+  ["stack_align", "social_align", "social_show"].forEach((id) => { const v = p.get(id); if (v) $(id).value = v; });
+}
+
 function init() {
   const sel = $("theme");
   Object.keys(THEMES).forEach((name) => {
@@ -262,10 +347,11 @@ function init() {
     sel.appendChild(o);
   });
   sel.value = DEFAULT_THEME;
-  buildSections();
+  restore();
+  renderStack();
+  renderSocials();
   buildSuggest();
   buildSocialSuggest();
-  applyTheme(DEFAULT_THEME);
 
   sel.onchange = () => { applyTheme(sel.value); render(); };
 
@@ -289,13 +375,18 @@ function init() {
       btn.closest(".collapsible")!.classList.toggle("open", opening);
     };
   });
+  if (stack.length) (document.querySelector('[data-target="stack_body"]') as HTMLElement).click();
+  if (socials.length) (document.querySelector('[data-target="social_body"]') as HTMLElement).click();
 
-  $("stack_input").addEventListener("keydown", (e: KeyboardEvent) => {
+  const stackInput = $("stack_input");
+  stackInput.addEventListener("focus", loadCatalog);
+  stackInput.addEventListener("input", filterSuggest);
+  stackInput.addEventListener("keydown", (e: KeyboardEvent) => {
     if (e.key === "Enter" || e.key === ",") {
       e.preventDefault();
-      const t = e.target as HTMLInputElement;
-      t.value.split(",").forEach(addStack);
-      t.value = "";
+      stackInput.value.split(",").forEach(addStack);
+      stackInput.value = "";
+      filterSuggest();
     }
   });
 
@@ -312,7 +403,7 @@ function init() {
     const p = buildParams();
     if (!p.has("username")) return;
     p.set("_", String(Date.now()));
-    $("card").src = `/api/card?${p.toString()}`;
+    setCardSrc(`/api/card?${p.toString()}`);
   };
 
   document.querySelectorAll<HTMLElement>(".copy").forEach((b) => {

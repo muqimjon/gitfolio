@@ -76,6 +76,25 @@ const TEXT_FALLBACK: Record<string, { label: string; hex: string }> = {
   blazor: { label: "Blazor", hex: "512BD4" },
 };
 
+export function iconCatalog(): [string, string, string][] {
+  const aliases = new Map<string, string[]>();
+  for (const [a, slug] of Object.entries(ALIAS)) {
+    if (a !== slug) aliases.set(slug, [...(aliases.get(slug) || []), a]);
+  }
+  const seen = new Set<string>();
+  const out: [string, string, string][] = [];
+  const add = (slug: string, title: string) => {
+    if (seen.has(slug)) return;
+    seen.add(slug);
+    out.push([slug, title, (aliases.get(slug) || []).join(" ")]);
+  };
+  for (const slug in INLINE_ICONS) add(slug, INLINE_ICONS[slug].label);
+  for (const slug in EXTRA_ICONS) add(slug, EXTRA_META[slug]?.label || slug);
+  for (const slug in TEXT_FALLBACK) add(slug, TEXT_FALLBACK[slug].label);
+  for (const [slug, ic] of bySlug) add(slug, ic.title);
+  return out;
+}
+
 export function resolveIcons(list: string[], limit = 20): Icon[] {
   const out: Icon[] = [];
   for (const raw of list.slice(0, limit)) {
