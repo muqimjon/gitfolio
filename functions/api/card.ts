@@ -12,6 +12,6 @@ export async function onRequestGet({ request, env, waitUntil }: EventCtx): Promi
   const url = new URL(request.url);
   const q = Object.fromEntries(url.searchParams);
   const { status, headers, body, meta } = await handleCard(q, env);
-  if (meta && env.DB) waitUntil(recordUsage(env.DB, meta, request.cf?.country ?? null).catch(() => {}));
+  if (meta && env.DB) waitUntil(recordUsage(env.DB, meta, request.cf?.country ?? null).catch((e) => console.error("telemetry:", e)));
   return new Response(body, { status, headers });
 }
