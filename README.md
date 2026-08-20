@@ -84,7 +84,7 @@ The static builder is served from `public/`; the `/api/card` endpoint is a Pages
    - **Build output directory:** `public`
    - Functions in `/functions` are detected automatically. No `nodejs_compat` flag needed — the code uses only Web APIs.
 3. Create a **classic** [Personal Access Token](https://github.com/settings/tokens) with **no scopes checked** (public data only).
-4. **Settings → Environment variables → Production** → add `GH_TOKEN` = your token → redeploy.
+4. Add the token as a secret: `npx wrangler pages secret put GH_TOKEN --project-name YOUR-PROJECT`. (While `wrangler.toml` is present it defines the project config, so dashboard environment variables are not used — secrets are.)
 5. Builder: `https://YOUR-PROJECT.pages.dev` · Card: `…/api/card?username=ANYONE`.
 
 ### Vercel (alternative)

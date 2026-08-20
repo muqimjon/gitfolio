@@ -95,6 +95,7 @@ export async function fetchProfile(
   if (!toks.length) throw new CardError("No GitHub token configured (set GH_TOKEN)", "NO_TOKEN");
 
   let rateLimited = false;
+  let badToken = false;
   for (const token of toks) {
     const json = await graphql({ login }, token);
 
@@ -105,7 +106,7 @@ export async function fetchProfile(
       if (/rate limit|api rate/i.test(msg)) { rateLimited = true; continue; }
       throw new CardError(msg || "GitHub API error", "API");
     }
-    if (json.message && /bad credentials/i.test(json.message)) { rateLimited = true; continue; }
+    if (json.message && /bad credentials/i.test(json.message)) { badToken = true; continue; }
     if (!json.data?.user) throw new CardError(`User "${login}" not found`, "NOT_FOUND");
 
     const user = json.data.user;
@@ -114,5 +115,7 @@ export async function fetchProfile(
     }
     return user;
   }
-  throw new CardError(rateLimited ? "GitHub API rate limit reached" : "GitHub API unavailable", "RATE");
+  if (rateLimited) throw new CardError("GitHub API rate limit reached", "RATE");
+  if (badToken) throw new CardError("GitHub token is invalid or expired", "NO_TOKEN");
+  throw new CardError("GitHub API unavailable", "RATE");
 }
