@@ -7,6 +7,7 @@ export interface UsageRow {
   contributions: number;
   streak: number;
   requests: number;
+  country: string | null;
 }
 
 export async function recordUsage(db: D1Database, m: CardMeta, country: string | null): Promise<void> {
@@ -24,14 +25,16 @@ export async function recordUsage(db: D1Database, m: CardMeta, country: string |
     .run();
 }
 
-export async function topUsers(db: D1Database, limit = 50): Promise<{ users: UsageRow[]; total: number }> {
+export async function topUsers(db: D1Database, limit = 50): Promise<{ users: UsageRow[]; total: number; served: number }> {
   const { results } = await db
     .prepare(
-      `SELECT username, name, stars, contributions, streak, requests FROM usage
+      `SELECT username, name, stars, contributions, streak, requests, country FROM usage
        ORDER BY contributions DESC, stars DESC LIMIT ?1`,
     )
     .bind(limit)
     .all<UsageRow>();
-  const count = await db.prepare("SELECT COUNT(*) AS total FROM usage").all<{ total: number }>();
-  return { users: results, total: count.results[0]?.total ?? 0 };
+  const agg = await db
+    .prepare("SELECT COUNT(*) AS total, COALESCE(SUM(requests), 0) AS served FROM usage")
+    .all<{ total: number; served: number }>();
+  return { users: results, total: agg.results[0]?.total ?? 0, served: agg.results[0]?.served ?? 0 };
 }
