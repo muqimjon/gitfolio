@@ -283,14 +283,34 @@ function buildParams(): URLSearchParams {
   return p;
 }
 
+const SEC_EST: Record<string, number> = { header: 54, stats: 56, langs: 68, streak: 82, activity: 66, stack: 42, social: 36 };
+function estimateHeight(): number {
+  const secs = checkedSections().filter(
+    (s) => (s !== "stack" || stack.length) && (s !== "social" || socials.length),
+  );
+  if (!secs.length) return 160;
+  return 48 + secs.reduce((a, s) => a + (SEC_EST[s] || 50), 0) + 22 * (secs.length - 1);
+}
+
 let lastSrc: string | null = null;
 function setCardSrc(src: string) {
   if (src === lastSrc) return;
   lastSrc = src;
   const card = $("card");
-  const stage = card.closest(".preview-stage")!;
+  const stage = card.closest(".preview-stage") as HTMLElement;
+  if (src) {
+    const skel = stage.querySelector(".skel") as HTMLElement;
+    const w = Math.min(480, stage.clientWidth - 48);
+    skel.style.width = `${w}px`;
+    skel.style.height = `${Math.round((estimateHeight() * w) / 480)}px`;
+  }
   stage.classList.toggle("loading", !!src);
-  card.onload = card.onerror = () => stage.classList.remove("loading");
+  card.onload = card.onerror = () => {
+    stage.classList.remove("loading");
+    card.style.animation = "none";
+    void card.offsetWidth;
+    card.style.animation = "cardIn .35s ease";
+  };
   card.src = src;
 }
 
@@ -300,7 +320,6 @@ function render() {
   $("hint").style.display = hasUser ? "none" : "block";
   const qs = p.toString();
   history.replaceState(null, "", qs ? `#${qs}` : location.pathname + location.search);
-  $("card").closest(".preview-stage")!.classList.toggle("checker", $("bg_transparent").checked);
   const abs = `${location.origin}/api/card?${qs}`;
   setCardSrc(hasUser ? `/api/card?${qs}` : "");
   const user = $("username").value.trim() || "USERNAME";

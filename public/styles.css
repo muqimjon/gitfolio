@@ -108,20 +108,20 @@ input[type=checkbox] { accent-color: var(--accent); width: 16px; height: 16px; }
 .ghost:hover { border-color: var(--accent); color: var(--text); }
 
 .preview-stage {
-  background: #0d1117; border: 1px solid var(--line); border-radius: 10px;
+  background-color: #0d1117; border: 1px solid var(--line); border-radius: 10px;
+  background-image: repeating-conic-gradient(#161d26 0% 25%, #0d1117 0% 50%);
+  background-size: 20px 20px;
   padding: 24px; display: flex; align-items: center; justify-content: center; min-height: 200px;
 }
-.preview-stage.checker {
-  background-image: repeating-conic-gradient(#1a212b 0% 25%, #0d1117 0% 50%);
-  background-size: 20px 20px;
-}
 .preview-stage img { max-width: 100%; height: auto; display: block; }
+@keyframes cardIn { from { opacity: 0; } to { opacity: 1; } }
 .preview-stage img[src=""] { display: none; }
 .hint { color: var(--muted); font-size: 13px; }
 .skel {
   display: none; width: 480px; max-width: 100%; height: 260px; border-radius: 10px;
   background: linear-gradient(100deg, var(--panel) 40%, var(--panel2) 50%, var(--panel) 60%);
   background-size: 200% 100%; animation: shimmer 1.1s linear infinite;
+  transition: height 0.3s ease, width 0.3s ease;
 }
 @keyframes shimmer { to { background-position: -200% 0; } }
 .preview-stage.loading .skel { display: block; }
