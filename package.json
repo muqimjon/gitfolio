@@ -5,7 +5,7 @@
   "type": "module",
   "description": "Universal, self-hostable GitHub stats card generator — one compact, animated, fully customizable SVG card.",
   "scripts": {
-    "build": "tsx scripts/gen-icons.ts && esbuild src/client/builder.ts src/client/leaderboard.ts --bundle --minify --format=iife --outdir=public",
+    "build": "tsx scripts/gen-icons.ts && esbuild src/client/builder.ts src/client/leaderboard.ts --bundle --minify --format=iife --outdir=public && tsx scripts/stamp.ts",
     "dev": "npm run build && tsx scripts/serve.ts",
     "preview": "tsx scripts/preview.ts",
     "typecheck": "tsc --noEmit"
