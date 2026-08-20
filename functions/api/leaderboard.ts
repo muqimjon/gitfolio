@@ -7,7 +7,7 @@ interface EventCtx {
 
 export async function onRequestGet({ env }: EventCtx): Promise<Response> {
   const data = env.DB ? await topUsers(env.DB) : { users: [], total: 0 };
-  return new Response(JSON.stringify(data), {
+  return new Response(JSON.stringify({ ...data, db: !!env.DB }), {
     headers: {
       "Content-Type": "application/json; charset=utf-8",
       "Cache-Control": "public, max-age=300, s-maxage=300",
