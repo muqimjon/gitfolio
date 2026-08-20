@@ -30,8 +30,8 @@ function style(anim: boolean, odoCss = ""): string {
     "text{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Ubuntu,Helvetica,Arial,sans-serif}";
   const on = `
 ${font}
-.sec{animation:fadeIn .8s ease both}
-@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.sec{animation:rise .8s ease both}
+@keyframes rise{from{transform:translateY(8px)}to{transform:translateY(0)}}
 .draw{animation:draw 3s ease-in-out forwards}
 @keyframes draw{from{stroke-dashoffset:4000}to{stroke-dashoffset:0}}
 .ring{animation:ring 2s ease-out forwards}
