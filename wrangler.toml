@@ -1,0 +1,8 @@
+name = "gitcrest"
+pages_build_output_dir = "public"
+compatibility_date = "2026-08-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "gitfolio"
+database_id = "26f44ea7-d4a5-43d2-b5b4-4f47902c48f9"

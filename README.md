@@ -102,6 +102,16 @@ Import the repo, set `GH_TOKEN`, deploy. Vercel runs `npm run build`, serves `pu
 | `WHITELIST` | Optional comma-separated usernames this instance will serve. Empty = anyone. |
 | `CACHE_SECONDS` | Optional fixed cache TTL (overrides the per-request clamp). |
 
+### Leaderboard & telemetry (optional, Cloudflare only)
+
+Each successful card render upserts the username's public stats into a **D1** table, and `/leaderboard.html` ranks everyone using the instance. To enable it on your own deploy:
+
+1. `npx wrangler d1 create gitfolio`
+2. `npx wrangler d1 execute gitfolio --remote --file=schema.sql`
+3. In `wrangler.toml`, set `name` to your Pages project and `database_id` to the id printed in step 1.
+
+Without the `DB` binding everything else works as usual — the leaderboard just stays empty. Only public GitHub stats are stored, no visitor data.
+
 ## Local development
 
 ```bash

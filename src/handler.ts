@@ -90,7 +90,12 @@ export async function handleCard(q: Query = {}, env: Env = {}): Promise<CardResp
     );
 
     const seconds = resolveCacheSeconds({ requested: q.cache_seconds, ...CACHE_TTL.CARD }, env);
-    return { status: 200, headers: { "Content-Type": SVG_TYPE, ...cacheHeaders(seconds) }, body: svg };
+    return {
+      status: 200,
+      headers: { "Content-Type": SVG_TYPE, ...cacheHeaders(seconds) },
+      body: svg,
+      meta: { username: stats.login, name: stats.name, stars: stats.stars, contributions: stats.contributions, streak: streak.current },
+    };
   } catch (err) {
     return { status: 200, headers: { "Content-Type": SVG_TYPE, ...errorCacheHeaders() }, body: errorCard(err as CardError, colors) };
   }

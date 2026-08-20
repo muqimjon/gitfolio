@@ -28,6 +28,10 @@ const server = http.createServer(async (req, res) => {
     for (const [k, v] of Object.entries(headers)) res.setHeader(k, v);
     return res.end(body);
   }
+  if (url.pathname === "/api/leaderboard") {
+    res.setHeader("Content-Type", "application/json; charset=utf-8");
+    return res.end(JSON.stringify({ users: [], total: 0 }));
+  }
   if (url.pathname === "/api/icon") {
     const { status, headers, body } = handleIcon(url.searchParams.get("slug") || "");
     res.statusCode = status;

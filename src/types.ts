@@ -135,11 +135,34 @@ export interface Section {
   draw: () => string;
 }
 
+export interface D1Result<T> {
+  results: T[];
+}
+
+export interface D1Statement {
+  bind(...args: unknown[]): D1Statement;
+  run(): Promise<unknown>;
+  all<T>(): Promise<D1Result<T>>;
+}
+
+export interface D1Database {
+  prepare(sql: string): D1Statement;
+}
+
 export interface Env {
   GH_TOKEN?: string;
   WHITELIST?: string;
   CACHE_SECONDS?: string;
-  [k: string]: string | undefined;
+  DB?: D1Database;
+  [k: string]: string | D1Database | undefined;
+}
+
+export interface CardMeta {
+  username: string;
+  name: string;
+  stars: number;
+  contributions: number;
+  streak: number;
 }
 
 export type Query = Record<string, string | undefined>;
@@ -148,4 +171,5 @@ export interface CardResponse {
   status: number;
   headers: Record<string, string>;
   body: string;
+  meta?: CardMeta;
 }

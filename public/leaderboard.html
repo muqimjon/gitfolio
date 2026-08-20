@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>gitfolio — leaderboard</title>
+  <meta name="description" content="Top GitHub users with a gitfolio stats card — ranked by contributions, stars and streaks.">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="top">
+    <a class="brand" href="/">git<span>folio</span></a>
+    <nav>
+      <a class="star-btn" href="https://github.com/muqimjon/gitfolio" target="_blank" rel="noopener">★ Star on GitHub</a>
+    </nav>
+  </header>
+
+  <main class="layout single">
+    <section class="panel">
+      <h1>Leaderboard</h1>
+      <p class="lead">Top users with a gitfolio card, ranked by contributions in the last year. <span id="lb_total"></span></p>
+      <div class="lb-wrap">
+        <table class="lb">
+          <thead>
+            <tr><th>#</th><th>User</th><th>Contributions</th><th>Stars</th><th>Streak</th></tr>
+          </thead>
+          <tbody id="lb_body"></tbody>
+        </table>
+      </div>
+      <p class="note" id="lb_empty" hidden>No cards yet — <a href="/">build yours</a> and be the first on the board.</p>
+      <p class="note">Not on the board? <a href="/">Build your card</a> and add it to your GitHub profile.</p>
+    </section>
+  </main>
+
+  <footer class="foot">
+    Free &amp; open source. If gitfolio is useful to you, <a href="https://github.com/muqimjon/gitfolio" target="_blank" rel="noopener">give it a ⭐ on GitHub</a>.
+  </footer>
+
+  <script src="/leaderboard.js"></script>
+</body>
+</html>

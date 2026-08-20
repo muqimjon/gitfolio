@@ -40,15 +40,15 @@ query userInfo($login: String!) {
 }`;
 
 function tokens(env?: Env): string[] {
-  const e: Record<string, string | undefined> = env || (typeof process !== "undefined" ? process.env : {}) || {};
+  const e: Env = env || (typeof process !== "undefined" ? (process.env as Env) : {}) || {};
   const list: string[] = [];
-  if (e.GH_TOKEN) list.push(e.GH_TOKEN);
+  if (typeof e.GH_TOKEN === "string" && e.GH_TOKEN) list.push(e.GH_TOKEN);
   Object.keys(e)
     .filter((k) => /^PAT_\d+$/.test(k))
     .sort((a, b) => Number(a.slice(4)) - Number(b.slice(4)))
     .forEach((k) => {
       const v = e[k];
-      if (v) list.push(v);
+      if (typeof v === "string" && v) list.push(v);
     });
   return [...new Set(list)];
 }
