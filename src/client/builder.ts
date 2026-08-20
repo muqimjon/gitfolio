@@ -300,6 +300,7 @@ function render() {
   $("hint").style.display = hasUser ? "none" : "block";
   const qs = p.toString();
   history.replaceState(null, "", qs ? `#${qs}` : location.pathname + location.search);
+  $("card").closest(".preview-stage")!.classList.toggle("checker", $("bg_transparent").checked);
   const abs = `${location.origin}/api/card?${qs}`;
   setCardSrc(hasUser ? `/api/card?${qs}` : "");
   const user = $("username").value.trim() || "USERNAME";

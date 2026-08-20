@@ -108,6 +108,10 @@ input[type=checkbox] { accent-color: var(--accent); width: 16px; height: 16px; }
   background: #0d1117; border: 1px solid var(--line); border-radius: 10px;
   padding: 24px; display: flex; align-items: center; justify-content: center; min-height: 200px;
 }
+.preview-stage.checker {
+  background-image: repeating-conic-gradient(#1a212b 0% 25%, #0d1117 0% 50%);
+  background-size: 20px 20px;
+}
 .preview-stage img { max-width: 100%; height: auto; display: block; }
 .preview-stage img[src=""] { display: none; }
 .hint { color: var(--muted); font-size: 13px; }
