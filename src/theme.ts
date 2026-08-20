@@ -43,9 +43,12 @@ export function resolveColors(q: Query = {}, themeName?: string): Colors {
     bgAngle = parseFloat(parts[0]);
     bgStops = parts.slice(1).map((h) => "#" + h);
   } else {
-    const b1 = rawHex(q.bg, base.bg);
     const b2 = rawHex(q.bg2, base.bg2);
-    bgStops = b2 ? ["#" + b1, "#" + b2] : ["#" + b1];
+    if (q.bg === "transparent") bgStops = b2 ? ["transparent", "#" + b2] : ["transparent"];
+    else {
+      const b1 = rawHex(q.bg, base.bg);
+      bgStops = b2 ? ["#" + b1, "#" + b2] : ["#" + b1];
+    }
   }
 
   return {

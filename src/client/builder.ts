@@ -258,7 +258,8 @@ function buildParams(): URLSearchParams {
   const diff = (id: string, base: string) => getColor(id).toLowerCase() !== (base || "").toLowerCase();
   if (diff("primary", t.primary)) p.set("primary", getColor("primary"));
   if (diff("secondary", t.secondary)) p.set("secondary", getColor("secondary"));
-  if (diff("bg", t.bg)) p.set("bg", getColor("bg"));
+  if ($("bg_transparent").checked) p.set("bg", "transparent");
+  else if (diff("bg", t.bg)) p.set("bg", getColor("bg"));
   if ($("use_bg2").checked) p.set("bg2", getColor("bg2"));
 
   const secs = checkedSections();
@@ -329,6 +330,7 @@ function restore() {
   if (p.get("username")) $("username").value = p.get("username")!;
   ["primary", "secondary", "bg", "bg2"].forEach((id) => { const v = p.get(id); if (v) setColor(id, v); });
   if (p.has("bg2")) $("use_bg2").checked = true;
+  if (p.get("bg") === "transparent") $("bg_transparent").checked = true;
   const secs = (p.get("sections") || "").split(",").map((s) => s.trim().toLowerCase()).filter((s) => SECTIONS.includes(s));
   buildSections(secs.length ? secs : SECTIONS);
   (p.get("stack") || "").split(",").map((s) => s.trim().toLowerCase()).filter(Boolean)
@@ -364,7 +366,7 @@ function init() {
   });
 
   $("username").oninput = renderDebounced;
-  ["animation", "all_commits", "hide_border", "stack_mono", "social_mono", "use_bg2"].forEach((id) => ($(id).onchange = render));
+  ["animation", "all_commits", "hide_border", "stack_mono", "social_mono", "use_bg2", "bg_transparent"].forEach((id) => ($(id).onchange = render));
   ["social_show", "stack_align", "social_align"].forEach((id) => ($(id).onchange = render));
 
   document.querySelectorAll<HTMLElement>(".legend.toggle").forEach((btn) => {

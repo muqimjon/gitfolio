@@ -37,8 +37,8 @@ Or build it visually with the **[interactive builder](https://gitfolio.muqimjon.
 | `theme` | Preset: `dark`, `gold`, `light`, `radical`, `dracula`, `ocean`, `sunset`, `forest` | `dark` |
 | `primary` | Accent/title color (hex, no `#`) | theme |
 | `secondary` | Icons/streak-ring color | theme |
-| `bg` | Background color, or gradient `deg,c1,c2` | theme |
-| `bg2` | Second gradient stop | — |
+| `bg` | Background color, gradient `deg,c1,c2`, or `transparent` | theme |
+| `bg2` | Second gradient stop; with `bg=transparent`, a radial fill that fades out at the edges | — |
 | `sections` | Comma list of `header,stats,langs,streak,activity,stack,social` | all |
 | `stack` | Comma list of tech slugs, e.g. `dotnet,react,docker` | — |
 | `stack_mono` | Tint stack icons with the `secondary` color instead of brand colors | `false` |

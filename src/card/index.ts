@@ -67,11 +67,14 @@ export function composeCard(data: CardData, opts: CardOptions): string {
   const height = Math.round(y - GAP + PAD);
   const odoCss = flushOdometerCss();
 
-  const grad = c.bgStops.length > 1;
-  const defs = grad
-    ? `<linearGradient id="bg" gradientTransform="rotate(${c.bgAngle})"><stop offset="0" stop-color="${c.bgStops[0]}"/><stop offset="1" stop-color="${c.bgStops[1]}"/></linearGradient>`
-    : "";
-  const bg = grad ? "url(#bg)" : c.bgStops[0];
+  const fade = c.bgStops[0] === "transparent" && c.bgStops.length > 1;
+  const grad = !fade && c.bgStops.length > 1;
+  const defs = fade
+    ? `<radialGradient id="bg" cx="0.5" cy="0.5" r="0.72"><stop offset="0" stop-color="${c.bgStops[1]}"/><stop offset="1" stop-color="${c.bgStops[1]}" stop-opacity="0"/></radialGradient>`
+    : grad
+      ? `<linearGradient id="bg" gradientTransform="rotate(${c.bgAngle})"><stop offset="0" stop-color="${c.bgStops[0]}"/><stop offset="1" stop-color="${c.bgStops[1]}"/></linearGradient>`
+      : "";
+  const bg = fade || grad ? "url(#bg)" : c.bgStops[0];
   const border = hideBorder ? "none" : c.border;
   const mark = brand
     ? `<text x="${WIDTH - 10}" y="${height - 9}" text-anchor="end" font-size="9" fill="${c.muted}" opacity="0.6">${BRAND}</text>`
