@@ -1,7 +1,7 @@
 import http from "node:http";
 import { readFileSync, existsSync, statSync } from "node:fs";
 import { extname, join, normalize } from "node:path";
-import { handleCard } from "../src/handler";
+import { handleCard, handleIcon } from "../src/handler";
 
 if (existsSync(".env")) {
   for (const line of readFileSync(".env", "utf8").split("\n")) {
@@ -24,6 +24,12 @@ const server = http.createServer(async (req, res) => {
   if (url.pathname === "/api/card") {
     const q = Object.fromEntries(url.searchParams.entries());
     const { status, headers, body } = await handleCard(q, process.env);
+    res.statusCode = status;
+    for (const [k, v] of Object.entries(headers)) res.setHeader(k, v);
+    return res.end(body);
+  }
+  if (url.pathname === "/api/icon") {
+    const { status, headers, body } = handleIcon(url.searchParams.get("slug") || "");
     res.statusCode = status;
     for (const [k, v] of Object.entries(headers)) res.setHeader(k, v);
     return res.end(body);

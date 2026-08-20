@@ -28,6 +28,15 @@ function parseSocials(str: string | undefined): Social[] {
     .filter((s) => s.platform);
 }
 
+export function handleIcon(slug: string): CardResponse {
+  const ic = slug ? resolveIcons([slug])[0] : undefined;
+  if (!ic?.path)
+    return { status: 404, headers: { "Content-Type": "text/plain", "Cache-Control": "max-age=86400" }, body: "not found" };
+  const vb = ic.vb || 24;
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${vb} ${vb}"><path fill="#${ic.hex}"${ic.fr ? ` fill-rule="${ic.fr}"` : ""} d="${ic.path}"/></svg>`;
+  return { status: 200, headers: { "Content-Type": SVG_TYPE, "Cache-Control": "public, max-age=31536000, immutable" }, body: svg };
+}
+
 export async function handleCard(q: Query = {}, env: Env = {}): Promise<CardResponse> {
   const colors = resolveColors(q, q.theme);
 
