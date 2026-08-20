@@ -5,9 +5,9 @@
 **One compact, animated, fully-customizable GitHub stats card.**
 Self-hostable · one image · any username · exact colors.
 
-![gitfolio card](https://gitcrest.pages.dev/api/card?username=muqimjon&theme=gold)
+![gitfolio card](https://gitfolio.muqimjon.uz/api/card?username=muqimjon&theme=gold)
 
-[Builder](https://gitcrest.pages.dev) · [Deploy your own](#deploy-your-own)
+[Builder](https://gitfolio.muqimjon.uz) · [Deploy your own](#deploy-your-own)
 
 </div>
 
@@ -25,7 +25,7 @@ Add one image to your profile `README.md` (swap `INSTANCE` for your deployed dom
 ![My GitHub stats](https://INSTANCE.pages.dev/api/card?username=YOUR_NAME&theme=gold)
 ```
 
-Or build it visually with the **[interactive builder](https://gitcrest.pages.dev)** — pick colors, toggle sections, choose your stack, copy the snippet.
+Or build it visually with the **[interactive builder](https://gitfolio.muqimjon.uz)** — pick colors, toggle sections, choose your stack, copy the snippet.
 
 ## Parameters
 

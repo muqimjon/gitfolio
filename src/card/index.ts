@@ -13,7 +13,7 @@ const WIDTH = 480;
 const PAD = 24;
 const GAP = 22;
 const RADIUS = 14;
-const BRAND = "gitcrest.pages.dev";
+const BRAND = "gitfolio.muqimjon.uz";
 
 const BUILDERS: Record<string, (ctx: CardContext) => Section> = {
   header,
